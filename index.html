@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JUCE — Mystic Haze Campaign Concept 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@300;400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --slate:      #636860;
+  --sage:       #8A9B7A;
+  --light-sage: #9FB08F;
+  --off-white:  #F4F2EE;
+  --white:      #F8F6F2;
+  --mauve:      #7D5F57;
+  --forest:     #1C2419;
+  --ink:        #0E100D;
+  --gap: clamp(80px, 10vw, 140px);
+}
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { font-family:'Jost',sans-serif; background:var(--ink); color:var(--white); overflow-x:hidden; cursor:none; }
+
+/* CURSOR */
+#cur { position:fixed; top:0; left:0; z-index:9999; pointer-events:none; }
+.c-dot { position:absolute; width:7px; height:7px; background:var(--white); border-radius:50%; transform:translate(-50%,-50%); }
+.c-ring { position:absolute; width:34px; height:34px; border:1px solid rgba(248,246,242,.45); border-radius:50%; transform:translate(-50%,-50%); transition:width .3s,height .3s; mix-blend-mode:difference; }
+
+/* NAV */
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:26px 52px; background:linear-gradient(to bottom, rgba(14,16,13,.9) 0%, transparent 100%); }
+.nav-logo { font-family:'Big Shoulders Display',sans-serif; font-weight:900; font-size:20px; letter-spacing:.2em; color:var(--white); text-decoration:none; }
+.nav-right { display:flex; align-items:center; gap:32px; }
+.nav-badge { font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:rgba(248,246,242,.4); border:1px solid rgba(248,246,242,.15); padding:5px 12px; }
+.nav-links { display:flex; gap:36px; list-style:none; }
+.nav-links a { font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:rgba(248,246,242,.5); text-decoration:none; transition:color .3s; }
+.nav-links a:hover { color:var(--white); }
+
+/* REVEAL */
+.reveal { opacity:0; transform:translateY(36px); transition:opacity .9s ease, transform .9s ease; }
+.reveal.in { opacity:1; transform:translateY(0); }
+.d1{transition-delay:.12s} .d2{transition-delay:.24s} .d3{transition-delay:.36s} .d4{transition-delay:.48s}
+
+/* SHARED */
+.label { font-size:9px; letter-spacing:.38em; text-transform:uppercase; color:var(--sage); display:block; margin-bottom:20px; }
+.divider { height:1px; background:linear-gradient(to right,transparent,rgba(138,155,122,.22),transparent); }
+
+@keyframes drift { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-40px) scale(1.04)} 66%{transform:translate(-20px,30px) scale(.97)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* ━━ 1. COVER ━━ */
+#cover { position:relative; height:100vh; min-height:680px; display:grid; grid-template-columns:1fr 1fr; overflow:hidden; }
+.cover-left { position:relative; background:var(--ink); display:flex; flex-direction:column; justify-content:flex-end; padding:0 52px 72px; z-index:2; }
+.cover-haze { position:absolute; inset:0; overflow:hidden; }
+.cover-haze-orb { position:absolute; border-radius:50%; filter:blur(100px); }
+.cover-haze-orb:nth-child(1) { width:500px; height:500px; top:-10%; left:-10%; background:radial-gradient(circle,rgba(138,155,122,.2) 0%,transparent 70%); animation:drift 20s ease-in-out infinite; }
+.cover-haze-orb:nth-child(2) { width:350px; height:350px; bottom:10%; left:30%; background:radial-gradient(circle,rgba(99,104,96,.18) 0%,transparent 70%); animation:drift 26s ease-in-out infinite reverse; }
+.cover-chapter { font-size:9px; letter-spacing:.38em; text-transform:uppercase; color:rgba(248,246,242,.35); margin-bottom:24px; opacity:0; animation:fadeUp .8s ease .2s forwards; }
+.cover-title { font-family:'Big Shoulders Display',sans-serif; font-weight:900; font-size:clamp(72px,9vw,140px); line-height:.88; letter-spacing:-.02em; text-transform:uppercase; color:var(--white); opacity:0; animation:fadeUp 1s ease .4s forwards; }
+.cover-title .outline { color:transparent; -webkit-text-stroke:1px rgba(248,246,242,.4); }
+.cover-tagline { margin-top:28px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(16px,1.6vw,22px); font-weight:300; color:rgba(248,246,242,.6); line-height:1.55; max-width:360px; opacity:0; animation:fadeUp .9s ease .7s forwards; }
+.cover-meta { margin-top:40px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; opacity:0; animation:fadeUp .9s ease .9s forwards; }
+.cover-note { font-size:9px; letter-spacing:.28em; text-transform:uppercase; color:rgba(248,246,242,.45); padding:6px 14px; border:1px solid rgba(248,246,242,.12); border-radius:2px; }
+.cover-right { position:relative; overflow:hidden; }
+.cover-img { width:100%; height:100%; object-fit:cover; object-position:center; opacity:0; animation:fadeIn 1.4s ease .3s forwards; }
+.cover-right::before { content:''; position:absolute; top:0; left:0; bottom:0; width:30%; background:linear-gradient(to right,var(--ink),transparent); z-index:1; }
+.cover-right::after { content:''; position:absolute; bottom:0; left:0; right:0; height:25%; background:linear-gradient(to top,var(--ink),transparent); z-index:1; }
+.cover-scroll { position:absolute; bottom:40px; left:52px; z-index:3; display:flex; align-items:center; gap:12px; opacity:0; animation:fadeIn .8s ease 1.4s forwards; }
+.cover-scroll-line { width:40px; height:1px; background:rgba(248,246,242,.3); }
+.cover-scroll-text { font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:rgba(248,246,242,.3); }
+
+/* ━━ 2. CONTEXT BAR ━━ */
+#context { background:var(--off-white); color:var(--ink); padding:56px 52px; display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+.ctx-item { padding:0 36px 0 0; border-right:1px solid rgba(13,15,12,.1); }
+.ctx-item:last-child { border-right:none; }
+.ctx-label { font-size:9px; letter-spacing:.35em; text-transform:uppercase; color:var(--slate); margin-bottom:10px; display:block; }
+.ctx-value { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:20px; text-transform:uppercase; color:var(--ink); line-height:1.2; }
+.ctx-sub { font-size:11px; font-weight:200; color:rgba(13,15,12,.5); margin-top:4px; line-height:1.5; }
+
+/* ━━ 3. STORY ━━ */
+#story { padding:var(--gap) 52px; display:grid; grid-template-columns:280px 1fr; gap:100px; align-items:start; }
+.story-aside { position:sticky; top:120px; }
+.story-num { font-family:'Cormorant Garamond',serif; font-size:160px; font-weight:300; line-height:1; color:rgba(138,155,122,.15); }
+.story-aside-label { font-size:9px; letter-spacing:.35em; text-transform:uppercase; color:var(--sage); margin-top:-20px; }
+.story-headline { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:clamp(40px,5vw,68px); text-transform:uppercase; line-height:.95; letter-spacing:-.01em; color:var(--white); margin-bottom:44px; }
+.story-body { font-family:'Cormorant Garamond',serif; font-size:clamp(17px,1.5vw,21px); font-weight:300; line-height:1.8; color:rgba(248,246,242,.7); }
+.story-body p+p { margin-top:22px; }
+.story-body em { font-style:italic; color:var(--light-sage); }
+
+/* ━━ 4. PRODUCT ━━ */
+#product { display:grid; grid-template-columns:1fr 1fr; min-height:88vh; background:linear-gradient(135deg,#111710 0%,#0a0d09 100%); }
+.product-image-wrap { position:relative; overflow:hidden; background:#0a0e09; }
+.product-image-wrap img { width:100%; height:100%; object-fit:cover; object-position:center; filter:saturate(1.3) contrast(1.05); transition:transform 6s ease; }
+.product-image-wrap:hover img { transform:scale(1.03); }
+.product-image-wrap::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 40% 40%,rgba(138,155,122,.18) 0%,transparent 65%); mix-blend-mode:screen; pointer-events:none; }
+.product-info { display:flex; flex-direction:column; justify-content:center; padding:80px 60px; }
+.product-name { font-family:'Big Shoulders Display',sans-serif; font-weight:900; font-size:clamp(56px,6vw,88px); text-transform:uppercase; line-height:.88; letter-spacing:-.01em; color:var(--white); margin-bottom:8px; }
+.product-sub { font-size:10px; letter-spacing:.38em; text-transform:uppercase; color:var(--sage); margin-bottom:44px; }
+.product-desc { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:300; line-height:1.75; color:rgba(248,246,242,.65); margin-bottom:48px; max-width:480px; }
+.attrs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:44px; }
+.attr { font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:rgba(248,246,242,.5); padding:7px 16px; border:1px solid rgba(248,246,242,.12); border-radius:2px; }
+.note-stack { border:1px solid rgba(248,246,242,.08); }
+.note-row { display:grid; grid-template-columns:90px 1fr; padding:18px 24px; gap:20px; align-items:center; border-bottom:1px solid rgba(248,246,242,.06); transition:background .3s; }
+.note-row:last-child { border-bottom:none; }
+.note-row:hover { background:rgba(138,155,122,.06); }
+.note-tier-tag { font-size:8px; letter-spacing:.28em; text-transform:uppercase; color:rgba(248,246,242,.3); }
+.note-values { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:300; color:rgba(248,246,242,.75); }
+
+/* ━━ 5. PALETTE ━━ */
+#palette { padding:var(--gap) 52px; display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:center; background:var(--off-white); color:var(--ink); }
+.palette-headline { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:clamp(36px,4vw,56px); text-transform:uppercase; color:var(--ink); line-height:1; margin-bottom:28px; }
+.palette-body { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:300; line-height:1.75; color:rgba(13,15,12,.6); max-width:440px; }
+.palette-img { width:100%; border-radius:4px; box-shadow:0 24px 80px rgba(13,15,12,.15); }
+.swatch-strip { display:flex; gap:6px; margin-top:28px; }
+.swatch { flex:1; height:44px; border-radius:3px; position:relative; }
+.swatch-label { position:absolute; bottom:-22px; left:0; right:0; text-align:center; font-size:8px; letter-spacing:.1em; text-transform:uppercase; color:rgba(13,15,12,.4); }
+
+/* ━━ QUOTE ━━ */
+#quote { padding:clamp(100px,14vh,180px) 52px; background:var(--forest); text-align:center; position:relative; overflow:hidden; }
+.quote-glow { position:absolute; width:700px; height:700px; top:50%; left:50%; transform:translate(-50%,-50%); background:radial-gradient(circle,rgba(138,155,122,.1) 0%,transparent 65%); filter:blur(80px); animation:drift 16s ease-in-out infinite; }
+.q-mark { font-family:'Cormorant Garamond',serif; font-size:160px; line-height:.5; color:rgba(138,155,122,.2); display:block; }
+.q-text { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:clamp(44px,7vw,100px); text-transform:uppercase; line-height:.92; letter-spacing:-.01em; color:var(--white); position:relative; z-index:1; }
+.q-text em { font-style:normal; color:var(--light-sage); }
+.q-attr { margin-top:36px; font-size:9px; letter-spacing:.38em; text-transform:uppercase; color:rgba(248,246,242,.3); position:relative; z-index:1; }
+
+/* ━━ 6. CREATIVE DIRECTION ━━ */
+#creative { padding:var(--gap) 52px; background:var(--ink); }
+.creative-header { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:end; margin-bottom:72px; }
+.creative-headline { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:clamp(36px,4vw,56px); text-transform:uppercase; color:var(--white); line-height:1; }
+.creative-desc { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:300; line-height:1.75; color:rgba(248,246,242,.55); }
+.creative-sub { margin-bottom:72px; }
+.creative-sub-title { font-size:9px; letter-spacing:.35em; text-transform:uppercase; color:var(--sage); margin-bottom:28px; padding-bottom:16px; border-bottom:1px solid rgba(138,155,122,.2); display:block; }
+
+/* Moodboard */
+.moodboard { display:grid; grid-template-columns:repeat(6,1fr); grid-template-rows:240px 240px; gap:3px; }
+.mb { position:relative; overflow:hidden; background:var(--forest); }
+.mb img { width:100%; height:100%; object-fit:cover; transition:transform .7s ease, filter .7s ease; filter:saturate(.85); }
+.mb:hover img { transform:scale(1.06); filter:saturate(1.2); }
+.mb-lbl { position:absolute; bottom:12px; left:14px; font-size:8px; letter-spacing:.25em; text-transform:uppercase; color:rgba(248,246,242,.5); opacity:0; transition:opacity .3s; }
+.mb:hover .mb-lbl { opacity:1; }
+.span2 { grid-column:span 2; } .span3 { grid-column:span 3; }
+
+/* Ref grid */
+.ref-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px; }
+.ref-item { position:relative; overflow:hidden; aspect-ratio:3/4; }
+.ref-item img { width:100%; height:100%; object-fit:cover; transition:transform .7s ease; }
+.ref-item:hover img { transform:scale(1.04); }
+.ref-caption { position:absolute; bottom:0; left:0; right:0; padding:20px 18px 18px; background:linear-gradient(to top,rgba(14,16,13,.9),transparent); font-size:9px; letter-spacing:.25em; text-transform:uppercase; color:rgba(248,246,242,.7); }
+
+/* Render row */
+.render-row { display:grid; grid-template-columns:1fr 1fr; gap:3px; margin-top:3px; }
+.render-item { position:relative; overflow:hidden; aspect-ratio:2/3; background:var(--forest); }
+.render-item img { width:100%; height:100%; object-fit:cover; object-position:center; transition:transform .7s ease; }
+.render-item:hover img { transform:scale(1.04); }
+.render-caption { position:absolute; bottom:0; left:0; right:0; padding:20px 18px 18px; background:linear-gradient(to top,rgba(14,16,13,.9),transparent); font-size:9px; letter-spacing:.25em; text-transform:uppercase; color:rgba(248,246,242,.6); }
+
+/* ━━ 7. PILLARS ━━ */
+#pillars { padding:var(--gap) 52px; background:var(--off-white); color:var(--ink); }
+.pillars-headline { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:clamp(36px,4vw,56px); text-transform:uppercase; color:var(--ink); line-height:1; margin-bottom:64px; }
+.pillar-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:rgba(13,15,12,.08); }
+.pillar { background:var(--off-white); padding:52px 40px; position:relative; overflow:hidden; transition:background .4s; }
+.pillar:hover { background:#ebe8e2; }
+.pillar::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--sage); transform:scaleX(0); transform-origin:left; transition:transform .5s ease; }
+.pillar:hover::before { transform:scaleX(1); }
+.pillar-num { font-family:'Cormorant Garamond',serif; font-size:80px; font-weight:300; line-height:1; color:rgba(13,15,12,.07); position:absolute; top:28px; right:36px; }
+.pillar-dash { width:36px; height:1px; background:var(--sage); margin-bottom:32px; }
+.pillar-name { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:26px; text-transform:uppercase; color:var(--ink); line-height:1.1; margin-bottom:20px; }
+.pillar-copy { font-size:13px; font-weight:200; line-height:1.8; color:rgba(13,15,12,.55); }
+.pillar-kws { margin-top:28px; display:flex; flex-wrap:wrap; gap:6px; }
+.kw { font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--sage); padding:4px 10px; border:1px solid rgba(138,155,122,.4); border-radius:2px; }
+
+/* ━━ 8. TIMELINE ━━ */
+#timeline { padding:var(--gap) 52px; background:var(--ink); }
+.timeline-headline { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:clamp(36px,4vw,56px); text-transform:uppercase; color:var(--white); line-height:1; margin-bottom:72px; }
+.phases { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.phase { padding:52px 44px; border:1px solid rgba(248,246,242,.07); position:relative; transition:border-color .4s; }
+.phase:hover { border-color:rgba(138,155,122,.3); }
+.phase-num { font-family:'Cormorant Garamond',serif; font-size:60px; font-weight:300; line-height:1; color:rgba(138,155,122,.15); margin-bottom:16px; }
+.phase-tag { font-size:9px; letter-spacing:.35em; text-transform:uppercase; color:var(--sage); margin-bottom:12px; display:block; }
+.phase-date { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:24px; text-transform:uppercase; color:var(--white); margin-bottom:24px; }
+.phase-name { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:18px; text-transform:uppercase; color:rgba(248,246,242,.6); margin-bottom:20px; }
+.phase-items { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.phase-items li { font-size:12px; font-weight:200; line-height:1.6; color:rgba(248,246,242,.45); padding-left:16px; position:relative; }
+.phase-items li::before { content:'—'; position:absolute; left:0; color:var(--sage); }
+.bar-track { margin-top:44px; }
+.bar-label { font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:rgba(248,246,242,.25); margin-bottom:10px; }
+.bar { height:3px; border-radius:2px; background:linear-gradient(to right,var(--sage),var(--light-sage),transparent); position:relative; overflow:hidden; }
+.bar::after { content:''; position:absolute; inset:0; background:linear-gradient(to right,transparent 0%,rgba(255,255,255,.3) 50%,transparent 100%); animation:shimmer 3s ease infinite; }
+@keyframes shimmer { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
+
+/* ━━ 9. TASTEMAKERS ━━ */
+#tastemakers { padding:var(--gap) 52px; background:var(--forest); }
+.tm-header { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:end; margin-bottom:72px; }
+.tm-headline { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:clamp(36px,4vw,56px); text-transform:uppercase; color:var(--white); line-height:1; }
+.tm-body { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:300; line-height:1.75; color:rgba(248,246,242,.55); }
+.tm-layout { display:grid; grid-template-columns:1fr 1fr; gap:3px; }
+.tm-img-wrap { position:relative; overflow:hidden; aspect-ratio:3/4; }
+.tm-img-wrap img { width:100%; height:100%; object-fit:cover; object-position:center top; transition:transform .8s ease, filter .8s ease; filter:saturate(.85); }
+.tm-img-wrap:hover img { transform:scale(1.04); filter:saturate(1.1); }
+.tm-img-wrap::after { content:''; position:absolute; bottom:0; left:0; right:0; height:40%; background:linear-gradient(to top,rgba(28,36,25,.9),transparent); }
+.tm-img-label { position:absolute; bottom:20px; left:24px; z-index:1; font-size:9px; letter-spacing:.28em; text-transform:uppercase; color:rgba(248,246,242,.6); }
+.tm-criteria { padding:52px 48px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); display:flex; flex-direction:column; justify-content:center; gap:28px; }
+.tm-criteria-title { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:20px; text-transform:uppercase; color:var(--white); margin-bottom:4px; }
+.criterion { display:flex; flex-direction:column; gap:8px; }
+.criterion-label { font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--sage); }
+.criterion-text { font-size:13px; font-weight:200; line-height:1.7; color:rgba(248,246,242,.5); }
+
+/* ━━ 10. RETAIL ━━ */
+#retail { padding:var(--gap) 52px; background:var(--white); color:var(--ink); }
+.retail-headline { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:clamp(36px,4vw,56px); text-transform:uppercase; color:var(--ink); line-height:1; margin-bottom:64px; }
+.retail-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:rgba(13,15,12,.08); }
+.stockist { background:var(--white); padding:52px 40px; position:relative; overflow:hidden; cursor:pointer; transition:background .4s; }
+.stockist:hover { background:#ece9e3; }
+.stockist-arrow { position:absolute; top:44px; right:40px; font-size:18px; color:rgba(13,15,12,.2); transition:transform .3s,color .3s; }
+.stockist:hover .stockist-arrow { transform:translate(4px,-4px); color:var(--sage); }
+.stockist-n { font-family:'Cormorant Garamond',serif; font-size:56px; font-weight:300; line-height:1; color:rgba(13,15,12,.07); margin-bottom:16px; }
+.stockist-name { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:26px; text-transform:uppercase; color:var(--ink); margin-bottom:8px; line-height:1.1; }
+.stockist-role { font-size:9px; letter-spacing:.28em; text-transform:uppercase; color:var(--sage); margin-bottom:16px; display:block; }
+.stockist-desc { font-size:12px; font-weight:200; line-height:1.75; color:rgba(13,15,12,.5); }
+
+/* ━━ 11. DELIVERABLES ━━ */
+#deliverables { padding:var(--gap) 52px; background:var(--ink); }
+.deliv-headline { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:clamp(36px,4vw,56px); text-transform:uppercase; color:var(--white); line-height:1; margin-bottom:64px; }
+.deliv-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+.deliv-item { padding:44px 32px; border:1px solid rgba(248,246,242,.06); transition:border-color .4s,background .4s; }
+.deliv-item:hover { border-color:rgba(138,155,122,.3); background:rgba(138,155,122,.04); }
+.deliv-icon { width:32px; height:1px; background:var(--sage); margin-bottom:28px; }
+.deliv-name { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:18px; text-transform:uppercase; color:var(--white); margin-bottom:14px; }
+.deliv-items { list-style:none; display:flex; flex-direction:column; gap:8px; }
+.deliv-items li { font-size:11px; font-weight:200; line-height:1.6; color:rgba(248,246,242,.4); padding-left:14px; position:relative; }
+.deliv-items li::before { content:'—'; position:absolute; left:0; color:rgba(138,155,122,.5); }
+
+/* ━━ 12. CLOSING ━━ */
+#closing { position:relative; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; min-height:80vh; }
+.closing-left { position:relative; overflow:hidden; }
+.closing-left img { width:100%; height:100%; object-fit:cover; filter:saturate(1.1); }
+.closing-left::after { content:''; position:absolute; inset:0; background:linear-gradient(to right,transparent 60%,var(--ink) 100%); }
+.closing-right { background:var(--ink); display:flex; flex-direction:column; justify-content:center; padding:80px 60px; }
+.closing-kicker { font-size:9px; letter-spacing:.4em; text-transform:uppercase; color:var(--sage); margin-bottom:28px; display:block; }
+.closing-headline { font-family:'Big Shoulders Display',sans-serif; font-weight:900; font-size:clamp(56px,6vw,90px); text-transform:uppercase; line-height:.88; letter-spacing:-.01em; color:var(--white); margin-bottom:32px; }
+.closing-headline span { display:block; color:transparent; -webkit-text-stroke:1px rgba(248,246,242,.3); }
+.closing-body { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:300; line-height:1.75; color:rgba(248,246,242,.55); max-width:400px; margin-bottom:48px; }
+.cta-row { display:flex; gap:16px; flex-wrap:wrap; }
+.btn-primary { display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:var(--sage); color:var(--ink); font-family:'Jost',sans-serif; font-size:10px; font-weight:500; letter-spacing:.3em; text-transform:uppercase; text-decoration:none; transition:background .3s,transform .3s; }
+.btn-primary:hover { background:var(--light-sage); transform:translateY(-2px); }
+.btn-outline { display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:transparent; border:1px solid rgba(248,246,242,.25); color:rgba(248,246,242,.65); font-family:'Jost',sans-serif; font-size:10px; font-weight:400; letter-spacing:.3em; text-transform:uppercase; text-decoration:none; transition:border-color .3s,color .3s; }
+.btn-outline:hover { border-color:rgba(248,246,242,.6); color:var(--white); }
+
+/* FOOTER */
+footer { padding:44px 52px; border-top:1px solid rgba(248,246,242,.07); display:flex; justify-content:space-between; align-items:center; gap:40px; flex-wrap:wrap; }
+.footer-logo { font-family:'Big Shoulders Display',sans-serif; font-weight:900; font-size:18px; letter-spacing:.2em; color:var(--white); }
+.footer-sub { font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:rgba(248,246,242,.28); margin-top:4px; }
+.footer-links { display:flex; gap:32px; list-style:none; }
+.footer-links a { font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:rgba(248,246,242,.35); text-decoration:none; transition:color .3s; }
+.footer-links a:hover { color:var(--white); }
+.footer-legal { font-size:9px; letter-spacing:.08em; color:rgba(248,246,242,.2); text-align:right; line-height:1.6; }
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  #cover { grid-template-columns:1fr; } .cover-right { display:none; } .cover-left { min-height:100vh; }
+  #product { grid-template-columns:1fr; } .product-image-wrap { aspect-ratio:4/3; }
+  #palette { grid-template-columns:1fr; gap:48px; }
+  .creative-header,.tm-header { grid-template-columns:1fr; gap:24px; }
+}
+@media(max-width:768px){
+  nav { padding:22px 28px; } .nav-links { display:none; }
+  #context { grid-template-columns:1fr 1fr; gap:32px; padding:44px 28px; }
+  #story { grid-template-columns:1fr; gap:32px; padding:64px 28px; } .story-aside { position:static; } .story-num { font-size:80px; }
+  .product-info { padding:52px 28px; }
+  #palette,#creative,#pillars,#timeline,#tastemakers,#retail,#deliverables { padding:64px 28px; }
+  .moodboard { grid-template-columns:repeat(3,1fr); grid-template-rows:180px 180px 180px; } .span2,.span3 { grid-column:span 1; }
+  .ref-grid { grid-template-columns:1fr 1fr; }
+  .render-row { grid-template-columns:1fr 1fr; }
+  .pillar-grid,.phases,.deliv-grid,.retail-grid { grid-template-columns:1fr; }
+  .tm-layout { grid-template-columns:1fr; }
+  #closing { grid-template-columns:1fr; } .closing-left { display:none; } .closing-right { padding:80px 28px; }
+  footer { padding:40px 28px; flex-direction:column; align-items:flex-start; } .footer-legal { text-align:left; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur"><div class="c-dot"></div><div class="c-ring"></div></div>
+
+<nav>
+  <a href="#" class="nav-logo">JUCE</a>
+  <div class="nav-right">
+    <span class="nav-badge">Campaign Concept — 2026</span>
+    <ul class="nav-links">
+      <li><a href="#story">Story</a></li>
+      <li><a href="#creative">Direction</a></li>
+      <li><a href="#pillars">Pillars</a></li>
+      <li><a href="#timeline">Timeline</a></li>
+      <li><a href="#retail">Retail</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<!-- 1. COVER -->
+<section id="cover">
+  <div class="cover-left">
+    <div class="cover-haze">
+      <div class="cover-haze-orb"></div>
+      <div class="cover-haze-orb"></div>
+    </div>
+    <p class="cover-chapter">Chapter I — Pre-Production &nbsp;·&nbsp; Juce Fragrances &nbsp;·&nbsp; 2026</p>
+    <h1 class="cover-title">Mystic<br><span class="outline">Haze</span></h1>
+    <p class="cover-tagline">The atmosphere you keep. Forever.</p>
+    <div class="cover-meta">
+      <span class="cover-note">Fig Leaves</span>
+      <span class="cover-note">Sandalwood</span>
+      <span class="cover-note">White Tea</span>
+    </div>
+  </div>
+  <div class="cover-right">
+    <img src="./imgs/114.png" alt="Mystic Haze Campaign Render" class="cover-img">
+  </div>
+  <div class="cover-scroll">
+    <div class="cover-scroll-line"></div>
+    <span class="cover-scroll-text">Scroll to explore</span>
+  </div>
+</section>
+
+
+<!-- 2. CONTEXT -->
+<div id="context">
+  <div class="ctx-item reveal">
+    <span class="ctx-label">Product</span>
+    <div class="ctx-value">Mystic Haze</div>
+    <div class="ctx-sub">Eau de Parfum · 50ml</div>
+  </div>
+  <div class="ctx-item reveal d1">
+    <span class="ctx-label">Campaign Type</span>
+    <div class="ctx-value">Nationwide Relaunch</div>
+    <div class="ctx-sub">Limited → Permanent Signature</div>
+  </div>
+  <div class="ctx-item reveal d2">
+    <span class="ctx-label">Launch Date</span>
+    <div class="ctx-value">18 April 2026</div>
+    <div class="ctx-sub">Teaser from 15 April</div>
+  </div>
+  <div class="ctx-item reveal d3">
+    <span class="ctx-label">Distribution</span>
+    <div class="ctx-value">3 Retail Partners</div>
+    <div class="ctx-sub">We Are EGG · TApp · Medirite Plus</div>
+  </div>
+</div>
+<div class="divider"></div>
+
+
+<!-- 3. STORY -->
+<section id="story">
+  <div class="story-aside reveal">
+    <div class="story-num">01</div>
+    <div class="story-aside-label">The Story</div>
+  </div>
+  <div>
+    <h2 class="story-headline reveal d1">Night arrives<br>like a soft veil.</h2>
+    <div class="story-body reveal d2">
+      <p>The sky opens wide, the air turns cool, and the world finally quiets down. Somewhere beyond the last streetlight, the forest holds its breath.</p>
+      <p>There's a kind of stillness you don't find in daylight. It lives between the trunks, in the hush of leaves shifting overhead, in the pale spill of moonlight threading through branches. The ground is damp and dark and gentle underfoot.</p>
+      <p>Mystic Haze is built from that atmosphere. A clean spark of bergamot and aloe, like fresh air against skin. <em>White tea drifting through the middle, calm and restrained</em>, softened by coconut and the green edge of fig leaves. Then the warmth comes in low and steady — sandalwood, amber, musk.</p>
+      <p>It isn't loud. It doesn't ask for attention. <em>It's presence.</em> The kind that stays close, and lingers longer than expected.</p>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- 4. PRODUCT -->
+<section id="product">
+  <div class="product-image-wrap reveal">
+    <img src="./imgs/114.png" alt="Mystic Haze — Campaign Render">
+  </div>
+  <div class="product-info">
+    <span class="label reveal">The Vessel</span>
+    <h2 class="product-name reveal d1">Mystic<br>Haze</h2>
+    <span class="product-sub reveal d1">Eau de Parfum · 50ml · Signature Collection</span>
+    <p class="product-desc reveal d2">A disciplined composition designed for clarity and calm. Each layer measured to unfold deliberately, evoking the fresh, misted forest floor of an early morning — cool, humid, and textured. A modern, day-ready woody fragrance built to endure.</p>
+    <div class="attrs reveal d2">
+      <span class="attr">Daytime</span><span class="attr">All Seasons</span><span class="attr">Gender Neutral</span><span class="attr">Woody</span>
+    </div>
+    <div class="note-stack reveal d3">
+      <div class="note-row"><span class="note-tier-tag">Top Notes</span><span class="note-values">Bergamot · Aloe Vera · Nutmeg</span></div>
+      <div class="note-row"><span class="note-tier-tag">Heart Notes</span><span class="note-values">White Tea · Fig Leaves · Coconut</span></div>
+      <div class="note-row"><span class="note-tier-tag">Base Notes</span><span class="note-values">Sandalwood · Amber · Musk</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- 5. PALETTE -->
+<section id="palette">
+  <div>
+    <span class="label reveal" style="color:var(--sage)">Colour System</span>
+    <h2 class="palette-headline reveal d1">Restrained.<br>Luxurious.<br>Natural.</h2>
+    <p class="palette-body reveal d2">Palette derived from the scent structure — slate and sage for the opening's green precision, light sage for the heart's quiet drift, white for clarity, and mauve for the warm sandalwood base. Controlled, muted, built to endure across all touchpoints.</p>
+  </div>
+  <div class="reveal d1">
+    <img src="./imgs/51.png" alt="Mystic Haze Colour Palette" class="palette-img">
+    <div class="swatch-strip">
+      <div class="swatch" style="background:#636860"><span class="swatch-label" style="color:rgba(13,15,12,.4)">Slate</span></div>
+      <div class="swatch" style="background:#8A9B7A"><span class="swatch-label" style="color:rgba(13,15,12,.4)">Sage</span></div>
+      <div class="swatch" style="background:#9FB08F"><span class="swatch-label" style="color:rgba(13,15,12,.4)">Lt Sage</span></div>
+      <div class="swatch" style="background:#F4F2EE;border:1px solid rgba(13,15,12,.1)"><span class="swatch-label" style="color:rgba(13,15,12,.4)">Off-White</span></div>
+      <div class="swatch" style="background:#7D5F57"><span class="swatch-label" style="color:rgba(13,15,12,.4)">Mauve</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- QUOTE -->
+<section id="quote">
+  <div class="quote-glow"></div>
+  <span class="q-mark reveal">"</span>
+  <h2 class="q-text reveal d1">The calm<br>after the <em>noise.</em></h2>
+  <p class="q-attr reveal d2">Mystic Haze — Core Campaign Message</p>
+</section>
+
+
+<!-- 6. CREATIVE DIRECTION -->
+<section id="creative">
+  <div class="creative-header">
+    <div>
+      <span class="label reveal">Creative Direction</span>
+      <h2 class="creative-headline reveal d1">World<br>Building</h2>
+    </div>
+    <p class="creative-desc reveal d2">Early morning. Brisk, cool air with mist and fog. A humid environment with dew drops forming up close. Rainforests, greenhouses, eco-brutalism. Hazy textured light streaks and diffused lighting — thick layers suggesting depth and scent structure.</p>
+  </div>
+
+  <div class="creative-sub">
+    <span class="creative-sub-title reveal">Atmosphere &amp; World References</span>
+    <div class="moodboard reveal d1">
+      <div class="mb span2"><img src="./imgs/58.jpg" alt="Haze and Lighting"><span class="mb-lbl">Haze &amp; Lighting</span></div>
+      <div class="mb"><img src="./imgs/65.jpg" alt="Tactile Design"><span class="mb-lbl">Tactile Design</span></div>
+      <div class="mb"><img src="./imgs/71.jpg" alt="Note Structure"><span class="mb-lbl">Note Structure</span></div>
+      <div class="mb"><img src="./imgs/75.jpg" alt="World Building"><span class="mb-lbl">World Building</span></div>
+      <div class="mb span2"><img src="./imgs/86.jpg" alt="Textile Haze"><span class="mb-lbl">Textile / Fabric Haze</span></div>
+      <div class="mb"><img src="./imgs/90.jpg" alt="Abstract Texture"><span class="mb-lbl">Abstract Texture</span></div>
+      <div class="mb"><img src="./imgs/91.jpg" alt="Organic Form"><span class="mb-lbl">Organic Form</span></div>
+      <div class="mb"><img src="./imgs/97.jpg" alt="Leaf Macro"><span class="mb-lbl">Leaf Macro</span></div>
+      <div class="mb"><img src="./imgs/78.jpg" alt="Forest Environment"><span class="mb-lbl">Forest Environment</span></div>
+    </div>
+  </div>
+
+  <div class="creative-sub">
+    <span class="creative-sub-title reveal">Photography Direction &amp; Packaging</span>
+    <div class="ref-grid reveal d1">
+      <div class="ref-item"><img src="./imgs/19.jpg" alt="Packaging Design Print"><div class="ref-caption">Packaging Print Design</div></div>
+      <div class="ref-item"><img src="./imgs/33.jpg" alt="Photography Direction"><div class="ref-caption">Photography Direction — Ryan Hing</div></div>
+      <div class="ref-item"><img src="./imgs/110.jpg" alt="Visual Reference"><div class="ref-caption">Visual Reference</div></div>
+    </div>
+  </div>
+
+  <div class="creative-sub">
+    <span class="creative-sub-title reveal">Additional Mood References</span>
+    <div class="moodboard reveal d1" style="grid-template-rows:220px">
+      <div class="mb span2"><img src="./imgs/100.jpg" alt="Mood Reference"><span class="mb-lbl">Reference</span></div>
+      <div class="mb span2"><img src="./imgs/105.jpg" alt="Mood Reference"><span class="mb-lbl">Reference</span></div>
+      <div class="mb span2"><img src="./imgs/108.jpg" alt="" onerror="this.src='./imgs/110.jpg'"><span class="mb-lbl">Reference</span></div>
+    </div>
+  </div>
+
+  <div class="creative-sub">
+    <span class="creative-sub-title reveal">Original Visual Direction — Prior Launch Reference</span>
+    <div class="render-row reveal d1">
+      <div class="render-item"><img src="./imgs/4.jpg" alt="Original Launch Render — Starfield"><div class="render-caption">Original Launch Visual — Starfield</div></div>
+      <div class="render-item"><img src="./imgs/3.jpg" alt="Original Launch Render — B&amp;W Studio"><div class="render-caption">Original Launch Visual — B&amp;W Studio</div></div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- 7. PILLARS -->
+<section id="pillars">
+  <span class="label reveal" style="color:var(--sage)">Campaign Messaging</span>
+  <h2 class="pillars-headline reveal d1">Three Pillars.<br>One House.</h2>
+  <div class="pillar-grid">
+    <div class="pillar reveal">
+      <span class="pillar-num">01</span>
+      <div class="pillar-dash"></div>
+      <h3 class="pillar-name">Atmosphere<br>Over Fragrance</h3>
+      <p class="pillar-copy">We sell a mood — moonlight, mist, stillness, and clarity — rather than just notes. The creative benchmark for the full 2026 collection.</p>
+      <div class="pillar-kws"><span class="kw">Hush</span><span class="kw">Midnight Air</span><span class="kw">Silver Light</span><span class="kw">Low Glow</span></div>
+    </div>
+    <div class="pillar reveal d1">
+      <span class="pillar-num">02</span>
+      <div class="pillar-dash"></div>
+      <h3 class="pillar-name">The Signature<br>Icon</h3>
+      <p class="pillar-copy">From limited energy to permanent prestige. Mystic Haze is now the foundation of the 2026 JUCE house — designed for everyday permanence, not occasion.</p>
+      <div class="pillar-kws"><span class="kw">The Signature</span><span class="kw">Permanent</span><span class="kw">Enduring</span></div>
+    </div>
+    <div class="pillar reveal d2">
+      <span class="pillar-num">03</span>
+      <div class="pillar-dash"></div>
+      <h3 class="pillar-name">Nationwide<br>Authority</h3>
+      <p class="pillar-copy">A clear, elegant where-to-buy thread. Never shouty — always available. Consistent tone protecting desirability while driving volume nationwide.</p>
+      <div class="pillar-kws"><span class="kw">We Are EGG</span><span class="kw">TApp</span><span class="kw">Medirite Plus</span></div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- 8. TIMELINE -->
+<section id="timeline">
+  <span class="label reveal">Campaign Rollout</span>
+  <h2 class="timeline-headline reveal d1">Tease.<br>Unveil.<br>Sustain.</h2>
+  <div class="phases">
+    <div class="phase reveal">
+      <div class="phase-num">01</div>
+      <span class="phase-tag">Pre-Launch</span>
+      <div class="phase-date">15 – 17 April</div>
+      <div class="phase-name">Awareness &amp; The Feeling</div>
+      <ul class="phase-items">
+        <li>3D renders — nocturnal atmosphere</li>
+        <li>Frame return as "Structured Craft"</li>
+        <li>Teaser: "Some structures are built too well to be temporary."</li>
+        <li>Create intrigue — no explicit product reveal</li>
+      </ul>
+      <div class="bar-track"><div class="bar-label">Momentum</div><div class="bar" style="width:30%"></div></div>
+    </div>
+    <div class="phase reveal d1">
+      <div class="phase-num">02</div>
+      <span class="phase-tag">Launch</span>
+      <div class="phase-date">18 April</div>
+      <div class="phase-name">Education, Influencers &amp; In-Store</div>
+      <ul class="phase-items">
+        <li>Product anatomy 3D education content</li>
+        <li>Tastemaker hook: "What earns a permanent place in your routine?"</li>
+        <li>In-store materialization at all partners</li>
+        <li>BTS of Sanri Pienaar installation</li>
+      </ul>
+      <div class="bar-track"><div class="bar-label">Momentum</div><div class="bar" style="width:75%"></div></div>
+    </div>
+    <div class="phase reveal d2">
+      <div class="phase-num">03</div>
+      <span class="phase-tag">Sustain</span>
+      <div class="phase-date">27 April +</div>
+      <div class="phase-name">Creator POV &amp; Digital Gallery</div>
+      <ul class="phase-items">
+        <li>Director's cut abstract film essay</li>
+        <li>Digital Gallery on juce.co.za</li>
+        <li>Prevent launch fatigue — fragrance as muse</li>
+        <li>Cultural minimalism territory activated</li>
+      </ul>
+      <div class="bar-track"><div class="bar-label">Momentum</div><div class="bar" style="width:55%"></div></div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- 9. TASTEMAKERS -->
+<section id="tastemakers">
+  <div class="tm-header">
+    <div>
+      <span class="label reveal">Tastemakers Programme</span>
+      <h2 class="tm-headline reveal d1">Auteurs,<br>Not Promoters.</h2>
+    </div>
+    <p class="tm-body reveal d2">We align with the Mystic Haze archetype — self-reflective, deeply creative, rooted in urban South Africa. The <em style="font-style:italic;color:var(--light-sage)">Nocturnal Urbanite.</em> No discount codes. We build a luxury signature, not a bargain commodity.</p>
+  </div>
+  <div class="tm-layout reveal">
+    <div class="tm-img-wrap">
+      <img src="./imgs/33.jpg" alt="Photography Direction">
+      <div class="tm-img-label">Photography Direction — Ryan Hing</div>
+    </div>
+    <div class="tm-criteria">
+      <div class="tm-criteria-title">Creator Selection Criteria</div>
+      <div class="criterion"><span class="criterion-label">I. Tactile Silence Test</span><p class="criterion-text">Can they handle stillness? Diegetic sound over hype music. Their work must appreciate breathing room — no fast cuts.</p></div>
+      <div class="criterion"><span class="criterion-label">II. Environmental Sensitivity</span><p class="criterion-text">They treat local urban landscapes — brutalist buildings, forests — as characters. Spatial storytelling, not backdrop.</p></div>
+      <div class="criterion"><span class="criterion-label">III. Low-Light Sophistication</span><p class="criterion-text">Mastery of shadow and texture. Their work must look intentional in the dark. We want a filmic, accentuating grade.</p></div>
+      <div class="criterion"><span class="criterion-label">IV. Casting: Character Over Symmetry</span><p class="criterion-text">Avoid catalogue beauty. Faces with narrative weight — people who look like they have an internal monologue.</p></div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- 10. RETAIL -->
+<section id="retail">
+  <span class="label reveal" style="color:var(--sage)">Where to Find It</span>
+  <h2 class="retail-headline reveal d1">Nationwide.<br>Permanent.<br>Available.</h2>
+  <div class="retail-grid">
+    <div class="stockist reveal">
+      <span class="stockist-arrow">↗</span>
+      <div class="stockist-n">01</div>
+      <h3 class="stockist-name">We Are EGG</h3>
+      <span class="stockist-role">Experiential Anchor</span>
+      <p class="stockist-desc">The high-fashion discovery point. Where the full atmosphere of Mystic Haze is most visible — positioned as the place brand identity is experienced, not just purchased.</p>
+    </div>
+    <div class="stockist reveal d1">
+      <span class="stockist-arrow">↗</span>
+      <div class="stockist-n">02</div>
+      <h3 class="stockist-name">Beauty on TApp</h3>
+      <span class="stockist-role">Digital Converter</span>
+      <p class="stockist-desc">High-intent where-to-buy traffic driven by social proof. The digital touchpoint where tastemaker content converts to purchase intent and repeat ritual.</p>
+    </div>
+    <div class="stockist reveal d2">
+      <span class="stockist-arrow">↗</span>
+      <div class="stockist-n">03</div>
+      <h3 class="stockist-name">Medirite Plus</h3>
+      <span class="stockist-role">Lifestyle Scale</span>
+      <p class="stockist-desc">Primary driver for nationwide volume. Accessible without compromise — prestige without exclusion. Unified "hush" tone deployed across every shelf.</p>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- 11. DELIVERABLES -->
+<section id="deliverables">
+  <span class="label reveal">Core Deliverables</span>
+  <h2 class="deliv-headline reveal d1">What We're<br>Building.</h2>
+  <div class="deliv-grid">
+    <div class="deliv-item reveal">
+      <div class="deliv-icon"></div>
+      <div class="deliv-name">Campaign Direction</div>
+      <ul class="deliv-items">
+        <li>Overall direction &amp; key messaging</li>
+        <li>Rollout plan across all phases</li>
+        <li>Tease → Unveil → Launch → Sustain</li>
+      </ul>
+    </div>
+    <div class="deliv-item reveal d1">
+      <div class="deliv-icon"></div>
+      <div class="deliv-name">Key Visuals</div>
+      <ul class="deliv-items">
+        <li>Campaign visual identity</li>
+        <li>Social · Web · Email · Ads formats</li>
+        <li>4 hero visuals per note variation</li>
+      </ul>
+    </div>
+    <div class="deliv-item reveal d2">
+      <div class="deliv-icon"></div>
+      <div class="deliv-name">Packaging &amp; PR</div>
+      <ul class="deliv-items">
+        <li>Box sleeve &amp; tactile embossing</li>
+        <li>Sample card + card insert</li>
+        <li>PR gifting package design</li>
+      </ul>
+    </div>
+    <div class="deliv-item reveal d3">
+      <div class="deliv-icon"></div>
+      <div class="deliv-name">Creator Strategy</div>
+      <ul class="deliv-items">
+        <li>10–20 curated tastemaker selection</li>
+        <li>Director / production house briefs</li>
+        <li>Digital Gallery on juce.co.za</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- 12. CLOSING -->
+<section id="closing">
+  <div class="closing-left reveal">
+    <img src="./imgs/114.png" alt="Mystic Haze">
+  </div>
+  <div class="closing-right">
+    <span class="closing-kicker reveal">JUCE Fragrances — Signature Collection 2026</span>
+    <h2 class="closing-headline reveal d1">The Scent<br><span>That Stays.</span></h2>
+    <p class="closing-body reveal d2">Formerly a fleeting limited release. Now the permanent foundational pillar of the JUCE 2026 house. You made it part of your routine. We listened.</p>
+    <div class="cta-row reveal d3">
+      <a href="https://juce.co.za" target="_blank" class="btn-primary">Visit JUCE.co.za →</a>
+      <a href="#cover" class="btn-outline">Back to Top</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="footer-logo">JUCE</div>
+    <div class="footer-sub">Fragrances — Eau de Parfum · Signature Collection 2026</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#">Instagram</a></li>
+    <li><a href="#">TikTok</a></li>
+    <li><a href="https://juce.co.za">juce.co.za</a></li>
+  </ul>
+  <div class="footer-legal">© 2026 JUCE Fragrances.<br>Campaign Concept — Internal Use.<br>Made in South Africa.</div>
+</footer>
+
+<script>
+// CURSOR
+const cur=document.getElementById('cur'),dot=cur.querySelector('.c-dot'),ring=cur.querySelector('.c-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,.pillar,.stockist,.phase,.mb,.ref-item,.render-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='52px';ring.style.height='52px';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='34px';ring.style.height='34px';});
+});
+
+// SCROLL REVEAL
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
